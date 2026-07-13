@@ -466,6 +466,76 @@
   .lore-modal p{
     font-size:15px; line-height:1.55; color:var(--text-dim); margin:0;
   }
+
+  /* hero card */
+  .hero-card{
+    display:flex; align-items:center; gap:16px;
+    margin-top:26px;
+    padding:16px;
+    border-radius:10px;
+    border:1.5px solid rgba(201,162,39,0.3);
+    background:linear-gradient(160deg, rgba(28,51,35,0.6), rgba(19,34,24,0.6));
+  }
+  .hero-avatar{width:72px; height:94px; flex-shrink:0;}
+  .hero-avatar img{width:100%; height:100%; object-fit:cover; object-position:top center; border-radius:6px;}
+  .hero-name{font-family:var(--font-display); color:var(--gold-light); font-size:16px; letter-spacing:0.3px;}
+  .hero-power{font-family:var(--font-mono); font-size:13px; color:var(--text-dim); margin-top:4px;}
+  .hero-power span{color:var(--gold-light); font-weight:700;}
+  .hero-card .btn.ghost{padding:8px 12px; font-size:11px; margin-top:8px;}
+
+  /* item found modal */
+  .item-icon-big{font-size:56px; text-align:center; margin-bottom:8px;}
+  .item-stat{
+    margin-top:12px; font-family:var(--font-mono); color:var(--gold);
+    font-size:12.5px; letter-spacing:1px; text-transform:uppercase;
+  }
+
+  /* avatar customize modal */
+  .avatar-modal{max-height:85vh; overflow-y:auto;}
+  .avatar-preview-large{width:140px; height:180px; margin:0 auto 16px;}
+  .avatar-preview-large img{width:100%; height:100%; object-fit:cover; object-position:top center; border-radius:8px; border:1px solid rgba(201,162,39,0.3);}
+  .base-row{display:flex; gap:10px; justify-content:center; margin-bottom:20px;}
+  .base-swatch{
+    width:44px; height:44px; border-radius:50%;
+    border:2px solid rgba(201,162,39,0.25);
+    cursor:pointer; transition:all .2s ease;
+  }
+  .base-swatch.selected{border-color:var(--gold); box-shadow:0 0 10px rgba(201,162,39,0.6);}
+  .section-label{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--gold-dim);
+    margin:18px 0 10px; padding-bottom:6px;
+    border-bottom:1px solid rgba(201,162,39,0.2);
+  }
+  .slot-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;}
+  .slot-box{
+    border:1.5px solid rgba(201,162,39,0.25); border-radius:8px;
+    padding:10px 6px; text-align:center; cursor:pointer;
+    background:rgba(7,15,10,0.4);
+  }
+  .slot-box.filled{border-color:var(--gold); background:rgba(201,162,39,0.1);}
+  .slot-box .slot-icon{font-size:24px; display:block;}
+  .slot-box .slot-label{
+    font-family:var(--font-mono); font-size:9.5px; letter-spacing:1px;
+    text-transform:uppercase; color:var(--text-dim); margin-top:4px; display:block;
+  }
+  .item-card{
+    display:flex; align-items:center; gap:12px;
+    padding:10px 12px; border-radius:8px;
+    border:1.5px solid rgba(201,162,39,0.15);
+    background:rgba(19,34,24,0.4);
+    margin-bottom:8px; cursor:pointer;
+    transition:all .2s ease;
+  }
+  .item-card.locked{opacity:0.5; cursor:default; filter:grayscale(0.6);}
+  .item-card.equipped{border-color:var(--gold); background:rgba(201,162,39,0.12);}
+  .item-card .item-emoji{font-size:24px; width:30px; text-align:center;}
+  .item-card .item-name{font-family:var(--font-display); font-size:14px; color:var(--text);}
+  .item-card .item-meta{font-family:var(--font-mono); font-size:10.5px; color:var(--gold-dim); letter-spacing:0.5px;}
+  .item-card .item-tag{
+    margin-left:auto; font-family:var(--font-mono); font-size:9.5px;
+    color:var(--gold-light); letter-spacing:1px; text-transform:uppercase;
+  }
 </style>
 </head>
 <body>
@@ -492,6 +562,15 @@
     <div class="miles-count"><span id="totalMiles">0</span> <span id="unitLabel" style="font-size:20px;">mi</span></div>
     <div class="miles-of">of <span id="goalMiles">15</span> mi to Mordor</div>
     <div class="miles-label" id="statusLine">The journey begins in the Shire.</div>
+  </div>
+
+  <div class="hero-card" id="heroCard">
+    <div class="hero-avatar" id="heroAvatarPreview"></div>
+    <div>
+      <div class="hero-name" id="heroName">Ethan</div>
+      <div class="hero-power">⚔ Power: <span id="heroPower">0</span></div>
+      <button class="btn ghost" id="customizeBtn">Customize Hero</button>
+    </div>
   </div>
 
   <div class="trail" id="trail">
@@ -563,6 +642,30 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="itemOverlay">
+  <div class="modal lore-modal">
+    <div class="item-icon-big" id="itemIcon"></div>
+    <div class="lore-eyebrow">Item found</div>
+    <h2 id="itemTitle"></h2>
+    <p id="itemDesc"></p>
+    <div class="item-stat" id="itemStat"></div>
+    <button class="btn" id="itemContinue" style="width:100%; margin-top:18px;">Add to inventory</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="avatarOverlay">
+  <div class="modal avatar-modal">
+    <h2>Customize Your Hero</h2>
+    <div class="avatar-preview-large" id="avatarPreviewLarge"></div>
+    <div class="base-row" id="baseRow"></div>
+    <div class="section-label">Equipment</div>
+    <div class="slot-grid" id="slotGrid"></div>
+    <div class="section-label">Inventory</div>
+    <div id="inventoryList"></div>
+    <button class="btn" id="avatarDone" style="width:100%; margin-top:18px;">Done</button>
+  </div>
+</div>
+
 <script>
 const STORAGE_KEY = 'ethan-mordor-quest-state';
 const SUPABASE_URL = 'https://kkhaxygzuyjmfwilvuov.supabase.co';
@@ -600,11 +703,41 @@ const MILESTONE_DEFS = [
     art:`<img src="mount%20doom.png" alt="Mount Doom">` },
 ];
 
+const ITEM_DEFS = [
+  { id:'cloak', frac:0.08, slot:'body', icon:'🧥', name:"Traveler's Cloak",
+    stat:'DEF', power:1, desc:"A worn cloak, but it'll keep the rain off." },
+  { id:'wsword', frac:0.18, slot:'weapon', icon:'🗡️', name:'Wooden Sword',
+    stat:'ATK', power:1, desc:"Not much of a blade, but it's yours." },
+  { id:'boots', frac:0.28, slot:'feet', icon:'🥾', name:'Leather Boots',
+    stat:'SPD', power:1, desc:'Good boots make all the difference on a long road.' },
+  { id:'dog', frac:0.38, slot:'pet', icon:'🐕', name:'Loyal Companion',
+    stat:'MORALE', power:1, desc:'A stray dog decides to join your quest.' },
+  { id:'helmet', frac:0.50, slot:'head', icon:'🪖', name:'Iron Helmet',
+    stat:'DEF', power:2, desc:'Dented, but sturdy.' },
+  { id:'shield', frac:0.62, slot:'offhand', icon:'🛡️', name:'Round Shield',
+    stat:'DEF', power:2, desc:'Better safe than sorry.' },
+  { id:'axe', frac:0.75, slot:'weapon', icon:'🪓', name:'Battle Axe',
+    stat:'ATK', power:3, desc:'Heavier than the sword — hits harder too.' },
+  { id:'starblade', frac:0.90, slot:'weapon', icon:'⚔️', name:'Star-forged Blade',
+    stat:'ATK', power:4, desc:'Something changes when you hold it. It glows faintly under moonlight.' },
+];
+
+const AVATAR_BASES = [
+  { id:'ranger', name:'Ranger', img:'Ranger.png' },
+  { id:'warrior', name:'Warrior', img:'Warrior.png' },
+  { id:'elf', name:'Elf-kin', img:'Elf.png' },
+  { id:'dwarf', name:'Dwarf-kin', img:'Dwarf.png' },
+];
+
+const SLOT_LABELS = { head:'Head', body:'Body', weapon:'Weapon', offhand:'Offhand', feet:'Feet', pet:'Pet' };
+
 let state = {
   name: "Ethan",
   goal: 15,
   reward: "A LEGO Lord of the Rings set",
-  entries: []
+  entries: [],
+  avatarBase: 'ranger',
+  equipped: {}
 };
 
 function totalMiles(){
@@ -619,7 +752,13 @@ async function loadState(){
     if(res.ok){
       const data = await res.json();
       if(data && data.length){
-        state = Object.assign(state, data[0]);
+        const row = data[0];
+        state.name = row.name ?? state.name;
+        state.goal = row.goal ?? state.goal;
+        state.reward = row.reward ?? state.reward;
+        state.entries = row.entries ?? state.entries;
+        state.avatarBase = row.avatar_base ?? state.avatarBase;
+        state.equipped = row.equipped ?? state.equipped;
       }
     }
   }catch(e){
@@ -639,6 +778,8 @@ async function saveState(){
         goal: state.goal,
         reward: state.reward,
         entries: state.entries,
+        avatar_base: state.avatarBase,
+        equipped: state.equipped,
         updated_at: new Date().toISOString()
       })
     });
@@ -658,6 +799,18 @@ function showToast(msg){
   showToast._timer = setTimeout(()=> t.classList.remove('show'), 2200);
 }
 
+function buildAvatarHTML(baseId){
+  const base = AVATAR_BASES.find(b => b.id === baseId) || AVATAR_BASES[0];
+  return `<img src="${base.img}" alt="${base.name}">`;
+}
+
+function calcPower(){
+  return Object.values(state.equipped).reduce((sum, itemId) => {
+    const item = ITEM_DEFS.find(i => i.id === itemId);
+    return sum + (item ? item.power : 0);
+  }, 0);
+}
+
 function render(){
   document.getElementById('pageTitle').textContent = `${state.name}'s Quest to Mount Doom`;
   document.getElementById('goalMiles').textContent = state.goal;
@@ -670,6 +823,10 @@ function render(){
   document.getElementById('trailFill').style.height = (frac*100) + '%';
   document.getElementById('ringToken').style.top = (frac*100) + '%';
   document.getElementById('fireOverlay').style.opacity = Math.min(frac * 0.9, 0.9).toFixed(2);
+
+  document.getElementById('heroName').textContent = state.name;
+  document.getElementById('heroPower').textContent = calcPower();
+  document.getElementById('heroAvatarPreview').innerHTML = buildAvatarHTML(state.avatarBase);
 
   const statusLine = document.getElementById('statusLine');
   if(frac >= 1){
@@ -751,14 +908,28 @@ function logMiles(){
 
   const justFinished = before < 1 && after >= 1;
   const crossedList = MILESTONE_DEFS.filter(m => m.frac > 0 && before < m.frac && after >= m.frac);
+  const crossedItems = ITEM_DEFS.filter(i => before < i.frac && after >= i.frac);
 
   if(justFinished){
     showToast('🔥 The Ring is destroyed — quest complete!');
   } else if(crossedList.length){
     openLore(crossedList[crossedList.length - 1]);
+  } else if(crossedItems.length){
+    openItemFound(crossedItems[crossedItems.length - 1]);
   } else {
     showToast(`Logged ${val} miles.`);
   }
+}
+
+function openItemFound(item){
+  document.getElementById('itemIcon').textContent = item.icon;
+  document.getElementById('itemTitle').textContent = item.name;
+  document.getElementById('itemDesc').textContent = item.desc;
+  document.getElementById('itemStat').textContent = `${SLOT_LABELS[item.slot]} · +${item.power} ${item.stat}`;
+  document.getElementById('itemOverlay').classList.add('open');
+}
+function closeItemFound(){
+  document.getElementById('itemOverlay').classList.remove('open');
 }
 
 function openLore(m){
@@ -809,6 +980,95 @@ function saveSettings(){
   showToast('Settings saved.');
 }
 
+function currentFrac(){
+  const total = totalMiles();
+  return state.goal > 0 ? Math.min(total, state.goal) / state.goal : 0;
+}
+
+function renderAvatarModal(){
+  document.getElementById('avatarPreviewLarge').innerHTML = buildAvatarHTML(state.avatarBase);
+
+  const baseRow = document.getElementById('baseRow');
+  baseRow.innerHTML = '';
+  AVATAR_BASES.forEach(b => {
+    const swatch = document.createElement('div');
+    swatch.className = 'base-swatch' + (state.avatarBase === b.id ? ' selected' : '');
+    swatch.style.backgroundImage = `url('${b.img}')`;
+    swatch.style.backgroundSize = 'cover';
+    swatch.style.backgroundPosition = 'top center';
+    swatch.title = b.name;
+    swatch.addEventListener('click', () => {
+      state.avatarBase = b.id;
+      saveState();
+      render();
+      renderAvatarModal();
+    });
+    baseRow.appendChild(swatch);
+  });
+
+  const slotGrid = document.getElementById('slotGrid');
+  slotGrid.innerHTML = '';
+  Object.keys(SLOT_LABELS).forEach(slot => {
+    const itemId = state.equipped[slot];
+    const item = ITEM_DEFS.find(i => i.id === itemId);
+    const box = document.createElement('div');
+    box.className = 'slot-box' + (item ? ' filled' : '');
+    box.innerHTML = `<span class="slot-icon">${item ? item.icon : '—'}</span><span class="slot-label">${SLOT_LABELS[slot]}</span>`;
+    if(item){
+      box.addEventListener('click', () => {
+        delete state.equipped[slot];
+        saveState();
+        render();
+        renderAvatarModal();
+      });
+    }
+    slotGrid.appendChild(box);
+  });
+
+  const frac = currentFrac();
+  const invList = document.getElementById('inventoryList');
+  invList.innerHTML = '';
+  ITEM_DEFS.forEach(item => {
+    const unlocked = frac >= item.frac - 0.0001;
+    const isEquipped = state.equipped[item.slot] === item.id;
+    const card = document.createElement('div');
+    card.className = 'item-card' + (unlocked ? '' : ' locked') + (isEquipped ? ' equipped' : '');
+    card.innerHTML = unlocked
+      ? `<span class="item-emoji">${item.icon}</span>
+         <div>
+           <div class="item-name">${item.name}</div>
+           <div class="item-meta">${SLOT_LABELS[item.slot]} · +${item.power} ${item.stat}</div>
+         </div>
+         <span class="item-tag">${isEquipped ? 'Equipped' : 'Tap to equip'}</span>`
+      : `<span class="item-emoji">🔒</span>
+         <div>
+           <div class="item-name">???</div>
+           <div class="item-meta">Unlocks at ${(item.frac * state.goal).toFixed(1).replace(/\.0$/,'')} mi</div>
+         </div>`;
+    if(unlocked){
+      card.addEventListener('click', () => {
+        if(isEquipped){
+          delete state.equipped[item.slot];
+        } else {
+          state.equipped[item.slot] = item.id;
+        }
+        saveState();
+        render();
+        renderAvatarModal();
+      });
+    }
+    invList.appendChild(card);
+  });
+}
+
+function openAvatarModal(){
+  renderAvatarModal();
+  document.getElementById('avatarOverlay').classList.add('open');
+}
+function closeAvatarModal(){
+  document.getElementById('avatarOverlay').classList.remove('open');
+}
+
 document.getElementById('logBtn').addEventListener('click', logMiles);
 document.getElementById('milesInput').addEventListener('keydown', e => { if(e.key === 'Enter') logMiles(); });
 document.getElementById('undoBtn').addEventListener('click', undoLast);
@@ -819,6 +1079,11 @@ document.getElementById('saveSettings').addEventListener('click', saveSettings);
 document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target.id === 'modalOverlay') closeSettings(); });
 document.getElementById('loreContinue').addEventListener('click', closeLore);
 document.getElementById('loreOverlay').addEventListener('click', e => { if(e.target.id === 'loreOverlay') closeLore(); });
+document.getElementById('itemContinue').addEventListener('click', closeItemFound);
+document.getElementById('itemOverlay').addEventListener('click', e => { if(e.target.id === 'itemOverlay') closeItemFound(); });
+document.getElementById('customizeBtn').addEventListener('click', openAvatarModal);
+document.getElementById('avatarDone').addEventListener('click', closeAvatarModal);
+document.getElementById('avatarOverlay').addEventListener('click', e => { if(e.target.id === 'avatarOverlay') closeAvatarModal(); });
 
 loadState();
 </script>
