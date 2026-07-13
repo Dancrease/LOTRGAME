@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>The Quest to Mount Doom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,500;1,600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --font-display: 'Cinzel', Georgia, 'Times New Roman', serif;
+    --font-body: 'EB Garamond', Georgia, 'Palatino Linotype', serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', Courier, monospace;
+
+    --bg-0:#070f0a;
+    --bg-1:#0e1c13;
+    --bg-2:#152c1c;
+    --panel:#132218;
+    --panel-light:#1c3323;
+
+    --gold:#c9a227;
+    --gold-light:#f2d878;
+    --gold-dim:#8a6d1f;
+    --gold-text: linear-gradient(180deg, #f6e3a0, #c9972c 55%, #8a6a1c);
+
+    --parchment:#e9dcbd;
+    --ink:#141b12;
+    --ink-soft:#a9b8a4;
+    --text:#e7e3d2;
+    --text-dim:#93a08d;
+
+    --forest:#2f5a3d;
+    --ember:#c85a2a;
+    --shadow:#040805;
+    --locked:#4a564c;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 700px 500px at 50% 0%, rgba(201,162,39,0.10), transparent 60%),
+      radial-gradient(circle at 15% 20%, rgba(47,90,61,0.35), transparent 40%),
+      radial-gradient(circle at 85% 15%, rgba(47,90,61,0.25), transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(0,0,0,0.6), transparent 55%),
+      linear-gradient(180deg, var(--bg-1), var(--bg-0) 60%);
+    background-attachment:fixed;
+    color:var(--text);
+    font-family:var(--font-body);
+    min-height:100vh;
+    padding-bottom:60px;
+    position:relative;
+  }
+  body::after{
+    content:"";
+    position:fixed; inset:0;
+    background:radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0,0,0,0.55) 100%);
+    pointer-events:none;
+    z-index:1;
+  }
+  #fireOverlay{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    opacity:0;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 100%, rgba(255,120,30,0.55), rgba(180,40,10,0.35) 45%, transparent 75%),
+      radial-gradient(ellipse 60% 40% at 50% 100%, rgba(255,200,80,0.4), transparent 60%);
+    transition:opacity 1.4s ease;
+  }
+  .wrap{max-width:480px;margin:0 auto;padding:0 18px; position:relative; z-index:2;}
+
+  /* header */
+  header{
+    position:relative;
+    text-align:center;
+    padding:44px 18px 26px;
+    overflow:hidden;
+  }
+  .ring-glow{
+    position:absolute;
+    top:-40px; left:50%; transform:translateX(-50%);
+    width:220px; height:220px;
+    border-radius:50%;
+    border:1.5px solid rgba(201,162,39,0.35);
+    box-shadow:0 0 50px 6px rgba(201,162,39,0.15) inset, 0 0 40px rgba(201,162,39,0.12);
+    z-index:0;
+  }
+  .ring-glow::before{
+    content:"";
+    position:absolute; inset:14px;
+    border-radius:50%;
+    border:1px solid rgba(201,162,39,0.2);
+  }
+  .eyebrow{
+    position:relative; z-index:1;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    color:var(--gold);
+    text-shadow:0 0 12px rgba(201,162,39,0.5);
+  }
+  h1{
+    position:relative; z-index:1;
+    font-family:var(--font-display);
+    font-weight:900;
+    font-size:29px;
+    letter-spacing:1.5px;
+    margin:10px 0 6px;
+    background:var(--gold-text);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter:drop-shadow(0 2px 10px rgba(201,162,39,0.35));
+  }
+  .divider{
+    position:relative; z-index:1;
+    display:flex; align-items:center; gap:10px;
+    max-width:220px; margin:6px auto 10px;
+    color:var(--gold-dim);
+  }
+  .divider::before, .divider::after{
+    content:""; flex:1; height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold-dim));
+  }
+  .divider::after{ background:linear-gradient(90deg, var(--gold-dim), transparent); }
+  .subtitle{
+    position:relative; z-index:1;
+    font-style:italic;
+    color:var(--text-dim);
+    font-size:14.5px;
+    margin:0;
+  }
+
+  /* sticky log bar */
+  .log-bar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:linear-gradient(180deg, var(--bg-1), var(--bg-1) 80%, transparent);
+    border-bottom:1px solid rgba(201,162,39,0.25);
+    box-shadow:0 10px 20px -10px rgba(0,0,0,0.6);
+    backdrop-filter:blur(2px);
+  }
+  .log-bar-inner{
+    max-width:480px;margin:0 auto;padding:12px 18px;
+    display:flex; gap:8px; align-items:center;
+  }
+  .log-bar input[type=number]{
+    flex:1;
+    font-family:var(--font-mono);
+    font-size:16px;
+    padding:11px 10px;
+    border:1.5px solid var(--gold-dim);
+    border-radius:6px;
+    background:var(--panel);
+    color:var(--text);
+  }
+  .log-bar input[type=number]::placeholder{color:var(--text-dim);}
+  .log-bar input[type=number]:focus{outline:2px solid var(--gold); outline-offset:1px;}
+  .btn{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.6px;
+    text-transform:uppercase;
+    border:1px solid var(--gold-dim);
+    border-radius:6px;
+    padding:12px 16px;
+    cursor:pointer;
+    background:linear-gradient(180deg, #dcb84a, #a9821f);
+    color:#1c1204;
+    box-shadow:0 1px 0 rgba(255,255,255,0.25) inset, 0 3px 8px rgba(0,0,0,0.4);
+    transition:transform .12s ease, filter .2s ease;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn:hover{filter:brightness(1.08);}
+  .btn.ghost{
+    background:transparent;
+    color:var(--text-dim);
+    border:1.5px solid rgba(201,162,39,0.35);
+    font-weight:600;
+    box-shadow:none;
+  }
+  .gear{
+    background:none;border:none;cursor:pointer;font-size:20px;
+    padding:6px 4px; color:var(--gold); line-height:1;
+  }
+
+  /* progress summary */
+  .summary{
+    text-align:center;
+    padding:22px 18px 6px;
+  }
+  .miles-count{
+    font-family:var(--font-mono);
+    font-size:38px;
+    font-weight:700;
+    color:var(--gold-light);
+    text-shadow:0 0 18px rgba(201,162,39,0.4);
+  }
+  .miles-of{
+    font-family:var(--font-mono);
+    font-size:15px;
+    color:var(--text-dim);
+  }
+  .miles-label{
+    font-size:14px;
+    color:var(--text-dim);
+    margin-top:4px;
+    font-style:italic;
+  }
+
+  /* trail */
+  .trail{
+    position:relative;
+    margin:40px 0 10px;
+    padding-left:34px;
+  }
+  .trail::before{
+    content:"";
+    position:absolute;
+    left:15px; top:6px; bottom:6px;
+    width:3px;
+    background-image:linear-gradient(rgba(201,162,39,0.3) 60%, transparent 0%);
+    background-size:3px 14px;
+    background-repeat:repeat-y;
+  }
+  .trail-fill{
+    position:absolute;
+    left:15px; top:6px;
+    width:3px;
+    background:linear-gradient(var(--forest), var(--gold));
+    border-radius:2px;
+    box-shadow:0 0 8px rgba(201,162,39,0.6);
+    transition:height 1s cubic-bezier(.2,.8,.2,1);
+  }
+  .ring-token{
+    position:absolute;
+    left:15px;
+    width:30px; height:30px;
+    transform:translate(-50%, -50%);
+    transition:top 1s cubic-bezier(.2,.8,.2,1);
+    filter:drop-shadow(0 0 8px rgba(242,216,120,0.9));
+    z-index:5;
+    animation:pulse 2.6s ease-in-out infinite;
+  }
+  .ring-token svg{width:100%;height:100%;}
+  @keyframes pulse{
+    0%,100%{filter:drop-shadow(0 0 6px rgba(242,216,120,0.7));}
+    50%{filter:drop-shadow(0 0 14px rgba(242,216,120,1));}
+  }
+
+  .milestone{
+    position:relative;
+    margin-bottom:38px;
+    padding-left:20px;
+  }
+  .milestone:last-child{margin-bottom:6px;}
+  .seal{
+    position:absolute;
+    left:-34px; top:0;
+    width:34px; height:34px;
+    border-radius:50%;
+    border:2.5px solid var(--locked);
+    background:radial-gradient(circle, #23291f, #171d15);
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px;
+    color:var(--locked);
+    transition:all .4s ease;
+    z-index:4;
+  }
+  .milestone.unlocked .seal{
+    border-color:var(--gold);
+    background:radial-gradient(circle, #f6e3a0, var(--gold) 70%, var(--gold-dim));
+    color:var(--shadow);
+    box-shadow:0 0 12px rgba(201,162,39,0.7);
+  }
+  .card{
+    background:linear-gradient(160deg, rgba(28,51,35,0.55), rgba(19,34,24,0.55));
+    border:1.5px solid rgba(201,162,39,0.15);
+    border-radius:8px;
+    padding:14px 16px;
+    filter:grayscale(0.6) brightness(0.75);
+    opacity:0.55;
+    transition:all .4s ease;
+  }
+  .milestone.unlocked .card{
+    filter:none;
+    opacity:1;
+    border-color:rgba(201,162,39,0.5);
+    background:linear-gradient(160deg, rgba(28,51,35,0.75), rgba(19,34,24,0.75));
+    box-shadow:0 4px 16px rgba(0,0,0,0.35);
+  }
+  .card h3{
+    font-family:var(--font-display);
+    font-size:16px;
+    margin:0 0 4px;
+    letter-spacing:0.5px;
+    color:var(--gold-light);
+  }
+  .card .dist{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--gold-dim);
+    letter-spacing:1.5px;
+  }
+  .card p{
+    margin:8px 0 0;
+    font-size:14.5px;
+    line-height:1.45;
+    color:var(--text-dim);
+  }
+  .milestone.unlocked .card p{color:var(--text);}
+  .art{
+    width:100%;
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:12px;
+    border:1px solid rgba(201,162,39,0.25);
+    box-shadow:0 4px 14px rgba(0,0,0,0.4);
+  }
+  .art svg{width:100%; height:100px; display:block;}
+  .fact{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed rgba(201,162,39,0.25);
+    font-size:13px;
+    line-height:1.5;
+    color:var(--text-dim);
+  }
+  .fact-label{
+    color:var(--gold);
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-right:4px;
+  }
+  .locked-note{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--locked);
+    letter-spacing:1px;
+  }
+
+  /* reward */
+  .reward{
+    margin-top:46px;
+    padding:26px 22px;
+    border-radius:10px;
+    text-align:center;
+    border:2px solid var(--locked);
+    background:linear-gradient(160deg, rgba(19,34,24,0.7), rgba(7,15,10,0.7));
+    filter:grayscale(0.7) brightness(0.8);
+    transition:all .6s ease;
+  }
+  .reward.unlocked{
+    filter:none;
+    border-color:var(--gold);
+    background:radial-gradient(ellipse at top, rgba(201,162,39,0.16), rgba(19,34,24,0.85));
+    box-shadow:0 0 30px rgba(201,162,39,0.35);
+    animation:glow 2.4s ease-in-out infinite alternate;
+  }
+  @keyframes glow{
+    from{box-shadow:0 0 16px rgba(201,162,39,0.25);}
+    to{box-shadow:0 0 36px rgba(201,162,39,0.5);}
+  }
+  .reward .icon{font-size:36px; display:block; margin-bottom:10px;}
+  .reward h3{
+    font-family:var(--font-display);
+    font-size:20px;
+    margin:0 0 6px;
+    color:var(--gold-light);
+    letter-spacing:0.5px;
+  }
+  .reward p{margin:0; font-size:15px; color:var(--text-dim);}
+  .reward.unlocked p{color:var(--text); font-weight:600;}
+
+  /* log history */
+  .history{margin-top:42px;}
+  .history h4{
+    font-family:var(--font-display);
+    font-size:13px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--gold-dim);
+    border-bottom:1px solid rgba(201,162,39,0.2);
+    padding-bottom:8px;
+  }
+  .entry-row{
+    display:flex; justify-content:space-between;
+    font-family:var(--font-mono);
+    font-size:13px;
+    padding:7px 0;
+    border-bottom:1px dotted rgba(201,162,39,0.15);
+    color:var(--text-dim);
+  }
+  .entry-row span:last-child{color:var(--gold-light); font-weight:700;}
+  .empty{font-size:14px; color:var(--text-dim); font-style:italic; padding:10px 0;}
+
+  footer{
+    text-align:center;
+    margin-top:40px;
+    display:flex; justify-content:center; gap:14px;
+  }
+
+  /* modal */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(2,5,3,0.75);
+    display:none; align-items:flex-end; justify-content:center;
+    z-index:50;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:linear-gradient(160deg, var(--panel-light), var(--panel));
+    width:100%; max-width:480px;
+    border-radius:16px 16px 0 0;
+    padding:22px 20px 28px;
+    border-top:2px solid var(--gold);
+    box-shadow:0 -10px 30px rgba(0,0,0,0.5);
+  }
+  .modal h2{
+    font-family:var(--font-display); font-size:18px; margin:0 0 16px; color:var(--gold-light);
+  }
+  .field{margin-bottom:14px;}
+  .field label{
+    display:block; font-family:var(--font-mono);
+    font-size:11px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--gold-dim); margin-bottom:5px;
+  }
+  .field input{
+    width:100%; padding:10px; font-family:var(--font-body); font-size:15px;
+    border:1.5px solid var(--gold-dim); border-radius:6px; background:var(--bg-1); color:var(--text);
+  }
+  .modal-actions{display:flex; gap:8px; margin-top:18px;}
+  .modal-actions .btn{flex:1;}
+
+  .toast{
+    position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(20px);
+    background:linear-gradient(160deg, var(--panel-light), var(--bg-0));
+    border:1px solid var(--gold-dim);
+    color:var(--gold-light);
+    font-family:var(--font-display); font-size:14px;
+    padding:12px 20px; border-radius:8px;
+    opacity:0; transition:all .35s ease; z-index:60;
+    max-width:88%; text-align:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.5);
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  .lore-modal{text-align:left;}
+  .lore-art{
+    width:100%; border-radius:8px; overflow:hidden;
+    border:1px solid rgba(201,162,39,0.35);
+    box-shadow:0 6px 20px rgba(0,0,0,0.5);
+    margin-bottom:16px;
+  }
+  .lore-art svg{width:100%; height:130px; display:block;}
+  .lore-eyebrow{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:3px;
+    text-transform:uppercase; color:var(--gold); margin-bottom:6px;
+  }
+  .lore-modal h2{
+    font-family:var(--font-display); font-size:22px; margin:0 0 10px; color:var(--gold-light);
+  }
+  .lore-modal p{
+    font-size:15px; line-height:1.55; color:var(--text-dim); margin:0;
+  }
+</style>
+</head>
+<body>
+<div id="fireOverlay"></div>
+
+<header>
+  <div class="ring-glow"></div>
+  <div class="eyebrow">The Fellowship Walks</div>
+  <h1 id="pageTitle">Ethan's Quest to Mount Doom</h1>
+  <div class="divider">◆</div>
+  <p class="subtitle">Every mile carries the Ring a little closer to the fire.</p>
+</header>
+
+<div class="log-bar">
+  <div class="log-bar-inner">
+    <input type="number" id="milesInput" placeholder="Miles walked" min="0" step="0.1" inputmode="decimal">
+    <button class="btn" id="logBtn">Log it</button>
+    <button class="gear" id="settingsBtn" aria-label="Settings">⚙</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="summary">
+    <div class="miles-count"><span id="totalMiles">0</span> <span id="unitLabel" style="font-size:20px;">mi</span></div>
+    <div class="miles-of">of <span id="goalMiles">15</span> mi to Mordor</div>
+    <div class="miles-label" id="statusLine">The journey begins in the Shire.</div>
+  </div>
+
+  <div class="trail" id="trail">
+    <div class="trail-fill" id="trailFill" style="height:0%"></div>
+    <div class="ring-token" id="ringToken" style="top:0%">
+      <svg viewBox="0 0 24 24" fill="none">
+        <defs>
+          <radialGradient id="ringGrad" cx="50%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#f6e3a0"/>
+            <stop offset="55%" stop-color="#d9ac30"/>
+            <stop offset="100%" stop-color="#7a5c14"/>
+          </radialGradient>
+        </defs>
+        <circle cx="12" cy="12" r="9.5" fill="none" stroke="url(#ringGrad)" stroke-width="3.2"/>
+        <circle cx="12" cy="12" r="9.5" fill="none" stroke="#3a2c08" stroke-width="0.6"/>
+      </svg>
+    </div>
+    <div id="milestoneList"></div>
+  </div>
+
+  <div class="reward" id="rewardBox">
+    <span class="icon" id="rewardIcon">📦</span>
+    <h3 id="rewardTitle">The Final Reward</h3>
+    <p id="rewardText">Sealed away until the Ring is destroyed.</p>
+  </div>
+
+  <div class="history">
+    <h4>Trail Log</h4>
+    <div id="entryList"><div class="empty">No miles logged yet. Take the first step.</div></div>
+  </div>
+
+  <footer>
+    <button class="btn ghost" id="undoBtn">Undo last entry</button>
+    <button class="btn ghost" id="resetBtn">Reset quest</button>
+  </footer>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>Quest Settings</h2>
+    <div class="field">
+      <label for="nameInput">Explorer's name</label>
+      <input type="text" id="nameInput">
+    </div>
+    <div class="field">
+      <label for="goalInput">Total distance to Mordor (miles)</label>
+      <input type="number" id="goalInput" min="1" step="0.5">
+    </div>
+    <div class="field">
+      <label for="rewardInput">Final reward (what's waiting at Mount Doom)</label>
+      <input type="text" id="rewardInput" placeholder="e.g. LEGO Lord of the Rings: The Shire set">
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelSettings">Cancel</button>
+      <button class="btn" id="saveSettings">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="loreOverlay">
+  <div class="modal lore-modal">
+    <div class="lore-art" id="loreArt"></div>
+    <div class="lore-eyebrow">New area discovered</div>
+    <h2 id="loreTitle">The Shire</h2>
+    <p id="loreFact"></p>
+    <button class="btn" id="loreContinue" style="width:100%; margin-top:18px;">Continue the journey</button>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'ethan-mordor-quest-state';
+const SUPABASE_URL = 'https://kkhaxygzuyjmfwilvuov.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtraGF4eWd6dXlqbWZ3aWx2dW92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MTY0MTIsImV4cCI6MjA5OTQ5MjQxMn0.jEJyv01dnQeA4A6TdmmEQIvdBsZI1K0HWr4BVl7vcgQ';
+const SB_HEADERS = {
+  apikey: SUPABASE_ANON_KEY,
+  Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+  'Content-Type': 'application/json'
+};
+
+const MILESTONE_DEFS = [
+  { frac: 0.0,  icon:'🏡', title:'The Shire',
+    blurb:'Every great journey starts with a single step out the front door.',
+    fact:'Hobbits are said to eat six meals a day — breakfast, second breakfast, elevenses, luncheon, afternoon tea, and dinner.',
+    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="100" fill="#1c3323"/>
+      <ellipse cx="140" cy="130" rx="220" ry="60" fill="#2f5a3d"/>
+      <ellipse cx="60" cy="115" rx="90" ry="45" fill="#38684a"/>
+      <circle cx="230" cy="22" r="14" fill="#f2d878" opacity="0.85"/>
+      <path d="M100 100 a40 40 0 0 1 80 0 z" fill="#3a2c1a"/>
+      <path d="M120 100 a20 20 0 0 1 40 0 z" fill="#141b12"/>
+      <circle cx="140" cy="88" r="4" fill="#c9a227"/>
+      <rect x="150" y="60" width="10" height="20" rx="2" fill="#4a3826"/>
+      <circle cx="155" cy="58" r="6" fill="#f2d878" opacity="0.7"/>
+    </svg>` },
+  { frac: 0.2,  icon:'🍺', title:'Bree',
+    blurb:'The road grows stranger past the borders of home, but you keep going.',
+    fact:'Bree sits at the crossing of two ancient roads, and its inns are famous for travellers swapping tales of the wider world.',
+    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="100" fill="#141c14"/>
+      <rect x="40" y="35" width="200" height="65" fill="#2a2018"/>
+      <polygon points="30,35 140,0 250,35" fill="#1c140d"/>
+      <rect x="120" y="55" width="40" height="45" fill="#0e0a06"/>
+      <rect x="65" y="55" width="26" height="26" fill="#c9a227" opacity="0.55"/>
+      <rect x="190" y="55" width="26" height="26" fill="#c9a227" opacity="0.55"/>
+      <line x1="30" y1="35" x2="20" y2="55" stroke="#3a2c1a" stroke-width="4"/>
+      <circle cx="20" cy="60" r="8" fill="#f2d878" opacity="0.8"/>
+    </svg>` },
+  { frac: 0.4,  icon:'🌿', title:'Rivendell',
+    blurb:'A place to rest and gather strength before the road gets harder.',
+    fact:'Hidden in a deep valley, this refuge is protected by old magic that keeps most evil things from finding it.',
+    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="100" fill="#0f2418"/>
+      <path d="M30 100 Q60 20 90 100" fill="none" stroke="#3f6b4d" stroke-width="6" opacity="0.8"/>
+      <path d="M90 100 Q120 10 150 100" fill="none" stroke="#c9a227" stroke-width="3" opacity="0.7"/>
+      <path d="M150 100 Q180 20 210 100" fill="none" stroke="#3f6b4d" stroke-width="6" opacity="0.8"/>
+      <path d="M210 100 Q240 30 260 100" fill="none" stroke="#3f6b4d" stroke-width="6" opacity="0.6"/>
+      <rect x="145" y="60" width="4" height="40" fill="#e7e3d2" opacity="0.4"/>
+      <rect x="152" y="65" width="4" height="35" fill="#e7e3d2" opacity="0.3"/>
+    </svg>` },
+  { frac: 0.6,  icon:'⛏️', title:'The Mines',
+    blurb:'Dark, deep, and a little scary. This is where real courage counts.',
+    fact:'Ancient dwarves once dug so deep beneath the mountains that they woke something far older and far more dangerous than themselves.',
+    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="100" fill="#0a0a08"/>
+      <path d="M60 100 L60 55 Q140 5 220 55 L220 100 Z" fill="#1a1712"/>
+      <path d="M80 55 L88 75 L96 55 Z" fill="#0a0a08"/>
+      <path d="M110 50 L120 78 L130 50 Z" fill="#0a0a08"/>
+      <path d="M150 50 L160 78 L170 50 Z" fill="#0a0a08"/>
+      <path d="M184 55 L192 75 L200 55 Z" fill="#0a0a08"/>
+      <circle cx="140" cy="80" r="10" fill="#c9a227" opacity="0.6"/>
+      <circle cx="140" cy="80" r="20" fill="#c9a227" opacity="0.15"/>
+    </svg>` },
+  { frac: 0.8,  icon:'🏰', title:"Helm's Deep",
+    blurb:'The last stronghold before the final push. Nearly there.',
+    fact:'This fortress was built into solid rock, with walls so thick that no army had ever broken through them before.',
+    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="100" fill="#161a1e"/>
+      <rect x="20" y="45" width="240" height="55" fill="#3a3a38"/>
+      <rect x="20" y="35" width="20" height="14" fill="#3a3a38"/>
+      <rect x="52" y="35" width="20" height="14" fill="#3a3a38"/>
+      <rect x="84" y="35" width="20" height="14" fill="#3a3a38"/>
+      <rect x="116" y="35" width="20" height="14" fill="#3a3a38"/>
+      <rect x="148" y="35" width="20" height="14" fill="#3a3a38"/>
+      <rect x="180" y="35" width="20" height="14" fill="#3a3a38"/>
+      <rect x="212" y="35" width="20" height="14" fill="#3a3a38"/>
+      <rect x="240" y="35" width="20" height="14" fill="#3a3a38"/>
+      <rect x="130" y="10" width="6" height="30" fill="#5c4a2a"/>
+      <polygon points="136,10 160,18 136,26" fill="#c9a227" opacity="0.8"/>
+    </svg>` },
+  { frac: 1.0,  icon:'🌋', title:'Mount Doom',
+    blurb:'The Ring is destroyed. The quest is complete.',
+    fact:'Only the fires of this mountain burn hot enough to unmake what was forged there long ago.',
+    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="lava" cx="50%" cy="20%" r="70%">
+          <stop offset="0%" stop-color="#ffd27a"/>
+          <stop offset="45%" stop-color="#ff5a1f"/>
+          <stop offset="100%" stop-color="#3a0d02"/>
+        </radialGradient>
+      </defs>
+      <rect width="280" height="100" fill="#1a0603"/>
+      <polygon points="140,10 220,100 60,100" fill="#241108"/>
+      <polygon points="140,10 165,45 115,45" fill="url(#lava)"/>
+      <ellipse cx="140" cy="8" rx="24" ry="6" fill="#ff8a3d" opacity="0.7"/>
+      <path d="M120 0 Q130 -14 118 -22" stroke="#5a5a5a" stroke-width="3" fill="none" opacity="0.5"/>
+      <path d="M150 -2 Q162 -16 152 -26" stroke="#5a5a5a" stroke-width="3" fill="none" opacity="0.4"/>
+    </svg>` },
+];
+
+let state = {
+  name: "Ethan",
+  goal: 15,
+  reward: "A LEGO Lord of the Rings set",
+  entries: []
+};
+
+function totalMiles(){
+  return state.entries.reduce((sum, e) => sum + e.miles, 0);
+}
+
+async function loadState(){
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/quest_state?id=eq.default&select=*`, {
+      headers: SB_HEADERS
+    });
+    if(res.ok){
+      const data = await res.json();
+      if(data && data.length){
+        state = Object.assign(state, data[0]);
+      }
+    }
+  }catch(e){
+    showToast("Couldn't reach the server — showing local data.");
+  }
+  render();
+}
+
+async function saveState(){
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/quest_state`, {
+      method: 'POST',
+      headers: { ...SB_HEADERS, Prefer: 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({
+        id: 'default',
+        name: state.name,
+        goal: state.goal,
+        reward: state.reward,
+        entries: state.entries,
+        updated_at: new Date().toISOString()
+      })
+    });
+    if(!res.ok){
+      showToast("Couldn't save — check connection.");
+    }
+  }catch(e){
+    showToast("Couldn't save — check connection.");
+  }
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+function render(){
+  document.getElementById('pageTitle').textContent = `${state.name}'s Quest to Mount Doom`;
+  document.getElementById('goalMiles').textContent = state.goal;
+
+  const total = totalMiles();
+  const clamped = Math.min(total, state.goal);
+  const frac = state.goal > 0 ? clamped / state.goal : 0;
+
+  document.getElementById('totalMiles').textContent = total.toFixed(1).replace(/\.0$/,'');
+  document.getElementById('trailFill').style.height = (frac*100) + '%';
+  document.getElementById('ringToken').style.top = (frac*100) + '%';
+  document.getElementById('fireOverlay').style.opacity = Math.min(frac * 0.9, 0.9).toFixed(2);
+
+  const statusLine = document.getElementById('statusLine');
+  if(frac >= 1){
+    statusLine.textContent = 'The Ring is destroyed. The quest is complete!';
+  } else {
+    const current = [...MILESTONE_DEFS].reverse().find(m => frac >= m.frac);
+    const next = MILESTONE_DEFS.find(m => m.frac > frac);
+    statusLine.textContent = next
+      ? `Currently near ${current.title} — next stop: ${next.title}.`
+      : `Currently near ${current.title}.`;
+  }
+
+  // milestones
+  const list = document.getElementById('milestoneList');
+  list.innerHTML = '';
+  MILESTONE_DEFS.forEach(m => {
+    const unlocked = frac >= m.frac - 0.0001;
+    const div = document.createElement('div');
+    div.className = 'milestone' + (unlocked ? ' unlocked' : '');
+    const milesAt = (m.frac * state.goal).toFixed(1).replace(/\.0$/,'');
+    div.innerHTML = `
+      <div class="seal">${unlocked ? m.icon : '🔒'}</div>
+      <div class="card">
+        ${unlocked ? `<div class="art">${m.art}</div>` : ''}
+        <div class="dist">${milesAt} MI</div>
+        <h3>${unlocked ? m.title : '???'}</h3>
+        <p>${unlocked ? m.blurb : `<span class="locked-note">Locked — keep walking to reveal.</span>`}</p>
+        ${unlocked ? `<div class="fact"><span class="fact-label">Did you know?</span> ${m.fact}</div>` : ''}
+      </div>
+    `;
+    if(unlocked){
+      div.querySelector('.card').style.cursor = 'pointer';
+      div.querySelector('.card').addEventListener('click', () => openLore(m));
+    }
+    list.appendChild(div);
+  });
+
+  // reward
+  const rewardBox = document.getElementById('rewardBox');
+  const rewardComplete = frac >= 1;
+  rewardBox.classList.toggle('unlocked', rewardComplete);
+  document.getElementById('rewardIcon').textContent = rewardComplete ? '🎁' : '📦';
+  document.getElementById('rewardTitle').textContent = rewardComplete ? 'The Quest Is Won!' : 'The Final Reward';
+  document.getElementById('rewardText').textContent = rewardComplete
+    ? state.reward
+    : 'Sealed away until every mile to Mordor is walked.';
+
+  // history
+  const entryList = document.getElementById('entryList');
+  if(state.entries.length === 0){
+    entryList.innerHTML = '<div class="empty">No miles logged yet. Take the first step.</div>';
+  } else {
+    entryList.innerHTML = '';
+    [...state.entries].reverse().forEach(e => {
+      const row = document.createElement('div');
+      row.className = 'entry-row';
+      const d = new Date(e.date);
+      const dateStr = d.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+      row.innerHTML = `<span>${dateStr}</span><span>+${e.miles} mi</span>`;
+      entryList.appendChild(row);
+    });
+  }
+}
+
+function logMiles(){
+  const input = document.getElementById('milesInput');
+  const val = parseFloat(input.value);
+  if(!val || val <= 0){
+    showToast('Enter how many miles were walked.');
+    return;
+  }
+  const before = totalMiles() / state.goal;
+  state.entries.push({ date: new Date().toISOString(), miles: Math.round(val*10)/10 });
+  const after = totalMiles() / state.goal;
+
+  input.value = '';
+  saveState();
+  render();
+
+  const justFinished = before < 1 && after >= 1;
+  const crossedList = MILESTONE_DEFS.filter(m => m.frac > 0 && before < m.frac && after >= m.frac);
+
+  if(justFinished){
+    showToast('🔥 The Ring is destroyed — quest complete!');
+  } else if(crossedList.length){
+    openLore(crossedList[crossedList.length - 1]);
+  } else {
+    showToast(`Logged ${val} miles.`);
+  }
+}
+
+function openLore(m){
+  document.getElementById('loreArt').innerHTML = m.art;
+  document.getElementById('loreTitle').textContent = m.title;
+  document.getElementById('loreFact').textContent = m.fact;
+  document.getElementById('loreOverlay').classList.add('open');
+}
+function closeLore(){
+  document.getElementById('loreOverlay').classList.remove('open');
+}
+
+function undoLast(){
+  if(state.entries.length === 0) return;
+  state.entries.pop();
+  saveState();
+  render();
+  showToast('Last entry removed.');
+}
+
+function resetQuest(){
+  if(!confirm('Reset all progress? This clears the trail log.')) return;
+  state.entries = [];
+  saveState();
+  render();
+  showToast('Quest reset. The road begins again.');
+}
+
+function openSettings(){
+  document.getElementById('nameInput').value = state.name;
+  document.getElementById('goalInput').value = state.goal;
+  document.getElementById('rewardInput').value = state.reward;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeSettings(){
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+function saveSettings(){
+  const name = document.getElementById('nameInput').value.trim();
+  const goal = parseFloat(document.getElementById('goalInput').value);
+  const reward = document.getElementById('rewardInput').value.trim();
+  if(name) state.name = name;
+  if(goal && goal > 0) state.goal = goal;
+  if(reward) state.reward = reward;
+  saveState();
+  render();
+  closeSettings();
+  showToast('Settings saved.');
+}
+
+document.getElementById('logBtn').addEventListener('click', logMiles);
+document.getElementById('milesInput').addEventListener('keydown', e => { if(e.key === 'Enter') logMiles(); });
+document.getElementById('undoBtn').addEventListener('click', undoLast);
+document.getElementById('resetBtn').addEventListener('click', resetQuest);
+document.getElementById('settingsBtn').addEventListener('click', openSettings);
+document.getElementById('cancelSettings').addEventListener('click', closeSettings);
+document.getElementById('saveSettings').addEventListener('click', saveSettings);
+document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target.id === 'modalOverlay') closeSettings(); });
+document.getElementById('loreContinue').addEventListener('click', closeLore);
+document.getElementById('loreOverlay').addEventListener('click', e => { if(e.target.id === 'loreOverlay') closeLore(); });
+
+loadState();
+</script>
+</body>
+</html>
