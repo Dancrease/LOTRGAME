@@ -319,7 +319,7 @@
     border:1px solid rgba(201,162,39,0.25);
     box-shadow:0 4px 14px rgba(0,0,0,0.4);
   }
-  .art svg{width:100%; height:100px; display:block;}
+  .art img{width:100%; height:100px; display:block; object-fit:cover;}
   .fact{
     margin-top:10px;
     padding-top:10px;
@@ -455,7 +455,7 @@
     box-shadow:0 6px 20px rgba(0,0,0,0.5);
     margin-bottom:16px;
   }
-  .lore-art svg{width:100%; height:130px; display:block;}
+  .lore-art img{width:100%; height:130px; display:block; object-fit:cover;}
   .lore-eyebrow{
     font-family:var(--font-mono); font-size:11px; letter-spacing:3px;
     text-transform:uppercase; color:var(--gold); margin-bottom:6px;
@@ -577,90 +577,27 @@ const MILESTONE_DEFS = [
   { frac: 0.0,  icon:'🏡', title:'The Shire',
     blurb:'Every great journey starts with a single step out the front door.',
     fact:'Hobbits are said to eat six meals a day — breakfast, second breakfast, elevenses, luncheon, afternoon tea, and dinner.',
-    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
-      <rect width="280" height="100" fill="#1c3323"/>
-      <ellipse cx="140" cy="130" rx="220" ry="60" fill="#2f5a3d"/>
-      <ellipse cx="60" cy="115" rx="90" ry="45" fill="#38684a"/>
-      <circle cx="230" cy="22" r="14" fill="#f2d878" opacity="0.85"/>
-      <path d="M100 100 a40 40 0 0 1 80 0 z" fill="#3a2c1a"/>
-      <path d="M120 100 a20 20 0 0 1 40 0 z" fill="#141b12"/>
-      <circle cx="140" cy="88" r="4" fill="#c9a227"/>
-      <rect x="150" y="60" width="10" height="20" rx="2" fill="#4a3826"/>
-      <circle cx="155" cy="58" r="6" fill="#f2d878" opacity="0.7"/>
-    </svg>` },
+    art:`<img src="shire.png" alt="The Shire">` },
   { frac: 0.2,  icon:'🍺', title:'Bree',
     blurb:'The road grows stranger past the borders of home, but you keep going.',
     fact:'Bree sits at the crossing of two ancient roads, and its inns are famous for travellers swapping tales of the wider world.',
-    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
-      <rect width="280" height="100" fill="#141c14"/>
-      <rect x="40" y="35" width="200" height="65" fill="#2a2018"/>
-      <polygon points="30,35 140,0 250,35" fill="#1c140d"/>
-      <rect x="120" y="55" width="40" height="45" fill="#0e0a06"/>
-      <rect x="65" y="55" width="26" height="26" fill="#c9a227" opacity="0.55"/>
-      <rect x="190" y="55" width="26" height="26" fill="#c9a227" opacity="0.55"/>
-      <line x1="30" y1="35" x2="20" y2="55" stroke="#3a2c1a" stroke-width="4"/>
-      <circle cx="20" cy="60" r="8" fill="#f2d878" opacity="0.8"/>
-    </svg>` },
+    art:`<img src="bree.png" alt="Bree">` },
   { frac: 0.4,  icon:'🌿', title:'Rivendell',
     blurb:'A place to rest and gather strength before the road gets harder.',
     fact:'Hidden in a deep valley, this refuge is protected by old magic that keeps most evil things from finding it.',
-    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
-      <rect width="280" height="100" fill="#0f2418"/>
-      <path d="M30 100 Q60 20 90 100" fill="none" stroke="#3f6b4d" stroke-width="6" opacity="0.8"/>
-      <path d="M90 100 Q120 10 150 100" fill="none" stroke="#c9a227" stroke-width="3" opacity="0.7"/>
-      <path d="M150 100 Q180 20 210 100" fill="none" stroke="#3f6b4d" stroke-width="6" opacity="0.8"/>
-      <path d="M210 100 Q240 30 260 100" fill="none" stroke="#3f6b4d" stroke-width="6" opacity="0.6"/>
-      <rect x="145" y="60" width="4" height="40" fill="#e7e3d2" opacity="0.4"/>
-      <rect x="152" y="65" width="4" height="35" fill="#e7e3d2" opacity="0.3"/>
-    </svg>` },
+    art:`<img src="rivendell.png" alt="Rivendell">` },
   { frac: 0.6,  icon:'⛏️', title:'The Mines',
     blurb:'Dark, deep, and a little scary. This is where real courage counts.',
     fact:'Ancient dwarves once dug so deep beneath the mountains that they woke something far older and far more dangerous than themselves.',
-    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
-      <rect width="280" height="100" fill="#0a0a08"/>
-      <path d="M60 100 L60 55 Q140 5 220 55 L220 100 Z" fill="#1a1712"/>
-      <path d="M80 55 L88 75 L96 55 Z" fill="#0a0a08"/>
-      <path d="M110 50 L120 78 L130 50 Z" fill="#0a0a08"/>
-      <path d="M150 50 L160 78 L170 50 Z" fill="#0a0a08"/>
-      <path d="M184 55 L192 75 L200 55 Z" fill="#0a0a08"/>
-      <circle cx="140" cy="80" r="10" fill="#c9a227" opacity="0.6"/>
-      <circle cx="140" cy="80" r="20" fill="#c9a227" opacity="0.15"/>
-    </svg>` },
+    art:`<img src="mines.png" alt="The Mines">` },
   { frac: 0.8,  icon:'🏰', title:"Helm's Deep",
     blurb:'The last stronghold before the final push. Nearly there.',
     fact:'This fortress was built into solid rock, with walls so thick that no army had ever broken through them before.',
-    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
-      <rect width="280" height="100" fill="#161a1e"/>
-      <rect x="20" y="45" width="240" height="55" fill="#3a3a38"/>
-      <rect x="20" y="35" width="20" height="14" fill="#3a3a38"/>
-      <rect x="52" y="35" width="20" height="14" fill="#3a3a38"/>
-      <rect x="84" y="35" width="20" height="14" fill="#3a3a38"/>
-      <rect x="116" y="35" width="20" height="14" fill="#3a3a38"/>
-      <rect x="148" y="35" width="20" height="14" fill="#3a3a38"/>
-      <rect x="180" y="35" width="20" height="14" fill="#3a3a38"/>
-      <rect x="212" y="35" width="20" height="14" fill="#3a3a38"/>
-      <rect x="240" y="35" width="20" height="14" fill="#3a3a38"/>
-      <rect x="130" y="10" width="6" height="30" fill="#5c4a2a"/>
-      <polygon points="136,10 160,18 136,26" fill="#c9a227" opacity="0.8"/>
-    </svg>` },
+    art:`<img src="keep.png" alt="Helm's Deep">` },
   { frac: 1.0,  icon:'🌋', title:'Mount Doom',
     blurb:'The Ring is destroyed. The quest is complete.',
     fact:'Only the fires of this mountain burn hot enough to unmake what was forged there long ago.',
-    art:`<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="lava" cx="50%" cy="20%" r="70%">
-          <stop offset="0%" stop-color="#ffd27a"/>
-          <stop offset="45%" stop-color="#ff5a1f"/>
-          <stop offset="100%" stop-color="#3a0d02"/>
-        </radialGradient>
-      </defs>
-      <rect width="280" height="100" fill="#1a0603"/>
-      <polygon points="140,10 220,100 60,100" fill="#241108"/>
-      <polygon points="140,10 165,45 115,45" fill="url(#lava)"/>
-      <ellipse cx="140" cy="8" rx="24" ry="6" fill="#ff8a3d" opacity="0.7"/>
-      <path d="M120 0 Q130 -14 118 -22" stroke="#5a5a5a" stroke-width="3" fill="none" opacity="0.5"/>
-      <path d="M150 -2 Q162 -16 152 -26" stroke="#5a5a5a" stroke-width="3" fill="none" opacity="0.4"/>
-    </svg>` },
+    art:`<img src="mount%20doom.png" alt="Mount Doom">` },
 ];
 
 let state = {
